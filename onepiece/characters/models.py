@@ -30,7 +30,48 @@ class Character(models.Model):
 
 	def __str__(self):
 		return self.name
+# Affilations: class is the table in DB ! 
+class Affilation(models.Model):
+
+	name = models.CharField(blank=False,  null= False, max_length=80)
+	total_bounty = models.IntegerField(default=0) #TODO: create funtion depends Character bounty
+	count_members = models.IntegerField(default=0)#TODO: create funtion depends members count
+	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+	#relations
+	member = models.ManyToManyField(Character)
+
+	class Meta:
+		verbose_name = "Affilation"
+		verbose_name_plural = "Affilation"
+		ordering = ['-timestamp']
+
+	def __str__(self):
+		return self.name
 
 
-#Character.objects.create(name='Monkey D Luffy', slug='Momkey-D-luffy', description='Es el protagonista principal de la serie de manga y anime One Piece. Comió una fruta del diablo de clase paramecia llamada fruta Gomu Gomu', apparence='Luffy lleva una chaqueta roja de manga larga con 4 botones (Con el pecho descubierto), con una banda amarilla atada a la cintura', epithet='Sombrero de Paja (麦わら Mugiwara)', bounty=500000000, activities='ser rey de los piratas', abilities= {"abilidades": ["haky del rey", "Haky de Obersvacion", Haky de Armadura"]})
-#INSERT INTO fruits_devilfruit Values(1, 'Gomu Gomu', 'nose', 1, 'estirarse', 'agua', 'morada', '2017-02-10 12:01:20');
+
+
+
+#create_slug: use for create slug whit the title name
+def create_slug(instance, new_slug=None):
+	slug = slugify(instance.name)
+	if new_slug is not None:
+		slug = new_slug
+	qs = Character.objects.filter(slug=slug).order_by('-id')#queryset for filter by slug, ordering from highest to lowest
+	exists = qs.exists()
+	if exists:
+		new_slug = '%s-%s' %(slug, qs.first().id)
+		return create_slug(instance, new_slug=new_slug)	#reuturn recursive function with the new slug
+	return slug
+
+
+#pre_save_Character_receiver: if haven't slug the instance.slug (instance.slug = Character.slug), create_slug do it
+def pre_save_Character_receiver(sender, instance, *args, **kwargs):
+	if not instance.slug:
+		instance.slug = create_slug(instance)
+
+pre_save.connect(pre_save_Character_receiver, sender=Character)
+
+
+''' Character.objects.create(name='Monkey D Luffy', slug='Momkey-D-luffy', description='Es el protagonista principal de la serie de manga y anime One Piece. Comió una fruta del diablo de clase paramecia llamada fruta Gomu Gomu', apparence='Luffy lleva una chaqueta roja de manga larga con 4 botones (Con el pecho descubierto), con una banda amarilla atada a la cintura', epithet='Sombrero de Paja (麦わら Mugiwara)', bounty=500000000, activities='ser rey de los piratas', abilities= {"abilidades": ["haky del rey", "Haky de Obersvacion", "Haky de Armadura"]})
+INSERT INTO fruits_devilfruit Values(1, 'Gomu Gomu', 'nose', 1, 'estirarse', 'agua', 'morada', '2017-02-10 12:01:20'); '''
