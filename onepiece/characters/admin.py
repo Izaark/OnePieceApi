@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Character
+from .models import Character, Affilation
 
 # CharacterModelAdmin, upgrade the view Dajngoadmin for default
 class CharacterModelAdmin(admin.ModelAdmin):
@@ -11,3 +11,4 @@ class CharacterModelAdmin(admin.ModelAdmin):
 	search_fields = ['name', 'description']
 
 admin.site.register(Character, CharacterModelAdmin)
+admin.site.register(Affilation)
