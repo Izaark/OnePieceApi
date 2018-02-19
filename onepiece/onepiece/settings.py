@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'characters',
-    'fruits'
+    'fruits',
+    'rest_framework',
+
 ]
 
 MIDDLEWARE = [
@@ -78,9 +80,9 @@ WSGI_APPLICATION = 'onepiece.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'anime1',
+        'NAME': 'anime2',
         'USER': 'luffy',
-        'PASSWORD': 'anime123',
+        'PASSWORD': 'anime1234',
         'HOST': 'localhost',
         'PORT': '',
     }
